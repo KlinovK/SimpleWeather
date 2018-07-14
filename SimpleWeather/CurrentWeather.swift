@@ -51,15 +51,43 @@ class CurrenWeather{
     }
     
     func downloadWeatherDetails(completed: @escaping DownloadComplete){
+       
+      
+        let session = URLSession.shared
         let url = URL(string: CURRENT_WEATHER_URL)!
 
-        let session = URLSession.shared
+        
+        
         session.dataTask(with: url) { (data, response, error) in
             if let responseData = data {
                 do {
+                    
                     let json = try
-                    JSONSerialization.jsonObject(with: responseData, options: JSONSerialization.ReadingOptions.allowFragments)
+                        JSONSerialization.jsonObject(with: responseData, options: JSONSerialization.ReadingOptions.allowFragments)
                     print(json)
+                    
+                    if let dict = json as? Dictionary<String, AnyObject> {
+                        if let name = dict["name"] as? String {
+                            self._cityName = name.capitalized
+                        
+                    }
+                    
+                        if let weather = dict["weather"] as? [Dictionary<String, AnyObject>] {
+                            if let main = weather[0]["main"] as? String {
+                                self._weatherType = main.capitalized
+                            }
+                        }
+                    
+                        if let main = dict["main"] as? Dictionary<String, AnyObject> {
+                            if let currentTemperature = main["temp"] as? Double {
+//                                let kelvinToFarenheitPreDivizion = (currentTemperature * (9/5) - 459,67)
+//                                let kelvinToFarenheit = Double(round(10 * kelvinToFarenheitPreDivizion / 10))
+                                self._currentTemp = currentTemperature
+                            }
+                        }
+                        
+                    }
+                 
                 } catch {
                     print("Could Not Searialize!")
                 }
