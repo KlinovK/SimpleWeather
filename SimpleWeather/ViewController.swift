@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import CoreLocation
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, CLLocationManagerDelegate {
 
     @IBOutlet weak var dateLbl: UILabel!
     @IBOutlet weak var currentWeatherLbl: UILabel!
@@ -16,13 +17,38 @@ class ViewController: UIViewController {
     @IBOutlet weak var currentWeatherImg: UIImageView!
     @IBOutlet weak var currentWeatherTypeLbl: UILabel!
     
+    
+    let locationManager = CLLocationManager()
+    var currentLocation: CLLocation!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startMonitoringSignificantLocationChanges()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        locationAuthStatus()
+
     }
 
-   
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        locationAuthStatus()
+    }
 
 
+    func locationAuthStatus(){
+        if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
+            currentLocation = locationManager.location
+            Location.sharedInstance.latitude = currentLocation.coordinate.latitude
+            Location.sharedInstance.longitude = currentLocation.coordinate.longitude
+        } else {
+            locationManager.requestWhenInUseAuthorization()
+        }
+    }
+    
 }
 
