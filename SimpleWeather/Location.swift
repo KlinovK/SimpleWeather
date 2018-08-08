@@ -6,12 +6,12 @@
 //  Copyright © 2018 Константин Клинов. All rights reserved.
 //
 
-import Foundation
+
 import CoreLocation
 
 class Location {
     static var sharedInstance = Location()
-    private init (){}
+    private init () {}
 
     var latitude: Double!
     var longitude: Double!

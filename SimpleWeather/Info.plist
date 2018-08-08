@@ -36,6 +36,8 @@
 	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need your location to give you relevant, up-to-date weather information</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Usage description</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

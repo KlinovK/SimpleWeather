@@ -9,7 +9,7 @@
 import UIKit
 import CoreLocation
 
-class ViewController: UIViewController, CLLocationManagerDelegate {
+class WeatherVC: UIViewController, CLLocationManagerDelegate {
 
     @IBOutlet weak var dateLbl: UILabel!
     @IBOutlet weak var currentWeatherLbl: UILabel!
@@ -20,20 +20,21 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     let locationManager = CLLocationManager()
     var currentLocation: CLLocation!
-    var currentWEather: CurrenWeather!
+    var currentWeather: CurrenWeather!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
-        currentWEather = CurrenWeather()
+       currentWeather = CurrenWeather()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startMonitoringSignificantLocationChanges()
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         locationAuthStatus()
 
     }
@@ -49,7 +50,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             Location.sharedInstance.latitude = currentLocation.coordinate.latitude
             Location.sharedInstance.longitude = currentLocation.coordinate.longitude
             
-            currentWEather.downloadWeatherDetails {
+            currentWeather.downloadWeatherDetails {
                 DispatchQueue.main.async {
                     self.updateMainUI()
                 }
@@ -60,11 +61,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func updateMainUI(){
-        dateLbl.text = currentWEather.date
-        currentWeatherLbl.text = "\(currentWEather.currentTemp)"
-        currentWeatherTypeLbl.text = currentWEather.weatherType
-        locationLbl.text = currentWEather.cityName
-        currentWeatherImg.image = UIImage(named: currentWEather.weatherType)
+        dateLbl.text = currentWeather.date
+        currentWeatherLbl.text = "\(currentWeather.currentTemp)"
+        currentWeatherTypeLbl.text = currentWeather.weatherType
+        locationLbl.text = currentWeather.cityName
+        currentWeatherImg.image = UIImage(named: currentWeather.weatherType)
     }
     
 }

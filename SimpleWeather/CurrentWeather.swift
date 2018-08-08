@@ -7,12 +7,15 @@
 //
 
 import Foundation
+import UIKit
+import CoreLocation
 
-class CurrenWeather{
-    private var _cityName: String!
-    private var _date: String!
-    private var _weatherType: String!
-    private var _currentTemp: Double!
+class CurrenWeather {
+    
+    fileprivate var _cityName: String!
+    fileprivate var _date: String!
+    fileprivate var _weatherType: String!
+    fileprivate var _currentTemp: Double!
    
 
     var cityName: String {
@@ -50,49 +53,54 @@ class CurrenWeather{
         return _currentTemp
     }
     
-    func downloadWeatherDetails(completed: @escaping DownloadComplete){
-       
-      
-        let session = URLSession.shared
+    func downloadWeatherDetails(completed: @escaping DownloadComplete) {
+         let session = URLSession.shared
         let url = URL(string: CURRENT_WEATHER_URL)!
 
-        
-        
         session.dataTask(with: url) { (data, response, error) in
+            
             if let responseData = data {
+                
                 do {
+                    let json = try JSONSerialization.jsonObject(with: responseData, options: JSONSerialization.ReadingOptions.allowFragments)
                     
-                    let json = try
-                        JSONSerialization.jsonObject(with: responseData, options: JSONSerialization.ReadingOptions.allowFragments)
                     print(json)
                     
                     if let dict = json as? Dictionary<String, AnyObject> {
+                        
+                        print("this is the dictionary \(dict)")
                         if let name = dict["name"] as? String {
                             self._cityName = name.capitalized
+                            print("city" + self._cityName)
+                        }
                         
-                    }
-                    
                         if let weather = dict["weather"] as? [Dictionary<String, AnyObject>] {
+                            
                             if let main = weather[0]["main"] as? String {
                                 self._weatherType = main.capitalized
+                                print(self._weatherType)
                             }
-                        }
-                    
-                        if let main = dict["main"] as? Dictionary<String, AnyObject> {
-                            if let currentTemperature = main["temp"] as? Double {
-//                                let kelvinToFarenheitPreDivizion = (currentTemperature * (9/5) - 459,67)
-//                                let kelvinToFarenheit = Double(round(10 * kelvinToFarenheitPreDivizion / 10))
-                                self._currentTemp = currentTemperature
-                            }
+                            
                         }
                         
+                        if let main = dict["main"] as? Dictionary<String, AnyObject> {
+                            if let currentTemperature = main["temp"] as? Double {
+                                let kelvinToFarenheitPreDivision = (currentTemperature * (9/5) - 459.67)
+                                let kelvinToFarenheit = Double(round(10 * kelvinToFarenheitPreDivision/10))
+                                self._currentTemp = kelvinToFarenheit
+                                print(self._currentTemp)
+                            }
+                        }
                     }
-                 
+                    
+                    
+                    print(json)
                 } catch {
-                    print("Could Not Searialize!")
+                    print("Could not serialize")
                 }
             }
-        } .resume()
+            completed()
+            }.resume()
     }
     
 }
